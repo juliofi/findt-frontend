@@ -1,12 +1,61 @@
-import styles from "./styles.module.css"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ importa o hook de navegação
+import styles from "./styles.module.css";
+
+const isCPF = (input: string): boolean => {
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned.length === 11;
+};
 
 const SearchPage = () => {
-    return (
-      <div className={styles.container} >
-        <h1 className={styles.title} >Findt</h1>
-        <input className={styles.searchBar} type="text" placeholder="Digite o nome ou CPF" />
-      </div>
-    );
+  const [inputValue, setInputValue] = useState("");
+  const navigate = useNavigate(); // ✅ cria o hook de navegação
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
   };
-  
-  export default SearchPage;
+
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      const query = inputValue.trim();
+
+      try {
+        let response;
+
+        if (isCPF(query)) {
+          response = await fetch(`http://localhost:8080/pessoas/cpf/${query}`);
+          if (!response.ok) throw new Error("Erro ao buscar pessoa por CPF");
+          const pessoa = await response.json();
+          navigate("/resultados", { state: { resultados: [pessoa] } }); // ✅ redireciona passando 1 resultado
+        } else {
+          response = await fetch(`http://localhost:8080/pessoas/buscar/nome`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nomeCompleto: query }),
+          });
+          if (!response.ok) throw new Error("Erro ao buscar pessoa por nome");
+          const pessoas = await response.json();
+          navigate("/resultados", { state: { resultados: pessoas } }); // ✅ redireciona passando vários
+        }
+      } catch (error) {
+        console.error("Erro na busca:", error);
+      }
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.title}>Findt</h1>
+      <input
+        className={styles.searchBar}
+        type="text"
+        placeholder="Digite o nome ou CPF"
+        value={inputValue}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+      />
+    </div>
+  );
+};
+
+export default SearchPage;
