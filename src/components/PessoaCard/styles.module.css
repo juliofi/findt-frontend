@@ -3,53 +3,39 @@
     border: 2px solid black;
     border-radius: 16px;
     padding: 1rem;
-    width: 180px;
-    text-align: center;
+    width: 240px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     font-family: sans-serif;
-  }
+}
   
-  .avatarContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 0.75rem;
-  }
+.avatarContainer {
+    padding: 16px 16px 0px 16px;
+}
+
+.info {
+    text-align: left;
+    padding-left: 8px;
+    font-size: 0.875rem;
+    line-height: 0.8;
+    width: 100%;
+}
   
-  .avatarCircle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: black;
-  }
-  
-  .avatarBody {
-    width: 60px;
-    height: 30px;
-    background-color: black;
-    border-radius: 0 0 8px 8px;
-    margin-top: 6px;
-  }
-  
-  .info {
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-  }
-  
-  .viewButton {
+.viewButton {
     background-color: black;
     color: white;
     border: none;
     border-radius: 12px;
-    padding: 0.5rem 1rem;
+    padding: 12px 92px;
     cursor: pointer;
     font-size: 0.8rem;
     transition: background-color 0.3s;
-  }
+}
   
-  .viewButton:hover {
+.viewButton:hover {
     background-color: #333;
-  }
+}
   

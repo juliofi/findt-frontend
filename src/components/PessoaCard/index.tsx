@@ -1,4 +1,5 @@
 import styles from "./styles.module.css"
+import { FaUser } from "react-icons/fa";
 
 type PessoaProps = {
     nomeCompleto: string;
@@ -16,15 +17,14 @@ const PessoaCard = ({ nomeCompleto, cpf, dataNascimento }: PessoaProps) => {
     return (
         <div className={styles.card}>
             <div className={styles.avatarContainer}>
-                <div className={styles.avatarCircle} />
-                <div className={styles.avatarBody} />
+                <FaUser size={120} color="black" />
             </div>
             <div className={styles.info}>
                 <p><strong>nome:</strong> {nomeCompleto}</p>
                 <p><strong>cpf:</strong> {cpf}</p>
                 <p><strong>nascimento:</strong> {formatarData(dataNascimento)}</p>
             </div>
-            <button className={styles.viewButton}>view</button>
+            <button className={styles.viewButton}>ver mais</button>
         </div>
     );
 };
