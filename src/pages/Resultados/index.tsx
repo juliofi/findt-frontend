@@ -6,14 +6,16 @@ import styles from "./styles.module.css";
 const Resultados = () => {
     console.log("🔍 Página de resultados carregada");
     const location = useLocation();
-    const pessoas = location.state?.pessoas || [];
+    const resultados = location.state?.resultados || [];
+    
+    console.log("Dados recebidos na página de resultados:", resultados);
 
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>Resultados</h1>
             <div className={styles.cardGrid}>
-                {pessoas.length > 0 ? (
-                    pessoas.map((pessoa: any, index: number) => (
+                {resultados.length > 0 ? (
+                    resultados.map((pessoa: any, index: number) => (
                         <PessoaCard
                             key={index}
                             nomeCompleto={pessoa.nomeCompleto}
