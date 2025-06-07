@@ -1,12 +1,11 @@
 /* pages/Resultados/styles.module.css */
 .container {
-    padding: 2rem;
     text-align: center;
   }
   
   .title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 32px;
+    margin: 96px 0px 64px 0px;
   }
   
   .cardGrid {

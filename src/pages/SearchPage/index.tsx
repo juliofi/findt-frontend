@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // ✅ importa o hook de navegação
+import { FaSpinner } from "react-icons/fa";
 import styles from "./styles.module.css";
 
 const isCPF = (input: string): boolean => {
@@ -9,6 +10,7 @@ const isCPF = (input: string): boolean => {
 
 const SearchPage = () => {
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate(); // ✅ cria o hook de navegação
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,8 +20,7 @@ const SearchPage = () => {
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       const query = inputValue.trim();
-      console.log("Valor da busca:", query);
-      console.log("É CPF?", isCPF(query));
+      setIsLoading(true);
 
       try {
         let response;
@@ -51,6 +52,8 @@ const SearchPage = () => {
         }
       } catch (error) {
         console.error("Erro detalhado na busca:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -58,14 +61,22 @@ const SearchPage = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Findt</h1>
-      <input
-        className={styles.searchBar}
-        type="text"
-        placeholder="Digite o nome ou CPF"
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
+      <div className={styles.searchContainer}>
+        <input
+          className={styles.searchBar}
+          type="text"
+          placeholder="Digite o nome ou CPF"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          disabled={isLoading}
+        />
+        {isLoading && (
+          <div className={styles.loadingContainer}>
+            <FaSpinner className={styles.loadingSpinner} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
