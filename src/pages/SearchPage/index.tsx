@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ importa o hook de navegação
+import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
+import api from "../../services/api";              // ✅ caminho corrigido para a api
 import styles from "./styles.module.css";
 
 const isCPF = (input: string): boolean => {
@@ -11,50 +12,35 @@ const isCPF = (input: string): boolean => {
 const SearchPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // ✅ cria o hook de navegação
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const query = inputValue.trim();
-      setIsLoading(true);
+    if (e.key !== "Enter") return;
+    const query = inputValue.trim();
+    if (!query) return;
 
-      try {
-        let response;
-
-        if (isCPF(query)) {
-          console.log("Buscando por CPF...");
-          response = await fetch(`http://localhost:8080/pessoas/cpf/${query}`);
-          if (!response.ok) throw new Error("Erro ao buscar pessoa por CPF");
-          const pessoa = await response.json();
-          console.log("Resultado da busca por CPF:", pessoa);
-          navigate("/resultados", { state: { resultados: [pessoa] } }); // ✅ redireciona passando 1 resultado
-        } else {
-          console.log("Buscando por nome...");
-          console.log("URL da requisição:", "http://localhost:8080/pessoas/buscar/nome");
-          console.log("Corpo da requisição:", JSON.stringify({ nomeCompleto: query }));
-          
-          response = await fetch(`http://localhost:8080/pessoas/buscar/nome`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nomeCompleto: query }),
-          });
-          
-          console.log("Status da resposta:", response.status);
-          if (!response.ok) throw new Error("Erro ao buscar pessoa por nome");
-          
-          const pessoas = await response.json();
-          console.log("Resultados da busca por nome:", pessoas);
-          navigate("/resultados", { state: { resultados: pessoas } }); // ✅ redireciona passando vários
-        }
-      } catch (error) {
-        console.error("Erro detalhado na busca:", error);
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    try {
+      if (isCPF(query)) {
+        // Busca por CPF (GET)
+        const { data: pessoa } = await api.get(`/pessoas/cpf/${query}`);
+        navigate("/resultados", { state: { resultados: [pessoa] } });
+      } else {
+        // Busca por nome (POST)
+        const { data: pessoas } = await api.post("/pessoas/buscar/nome", {
+          nomeCompleto: query,
+        });
+        navigate("/resultados", { state: { resultados: pessoas } });
       }
+    } catch (err: any) {
+      console.error("Erro na busca:", err.response?.data || err.message);
+      // aqui você pode mostrar um toast ou mensagem de erro
+    } finally {
+      setIsLoading(false);
     }
   };
 
